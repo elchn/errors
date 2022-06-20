@@ -4,7 +4,7 @@
  * Created At: Monday, 2022/06/20 , 11:11:43                                   *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/06/20 , 15:35:13                                *
+ * Last Modified: Monday, 2022/06/20 , 16:10:28                                *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -31,11 +31,11 @@ func (me MyError) Error() string {
 func ToMyError(e error) MyError {
 	myError := MyError{}
 
-	if e, ok := e.(*ErrorWithCode); ok {
-		myError.Code = e.Code
+	if e, ok := e.(*withCode); ok {
+		myError.Code = e.code
 		myError.Message = e.Error()
-		if _, ok := e.Details.(*ErrorWithCode); ok {
-			myError.Details = ToMyError(e.Details)
+		if _, ok := e.details.(*withCode); ok {
+			myError.Details = ToMyError(e.details)
 		}
 	}
 	return myError

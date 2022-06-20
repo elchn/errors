@@ -4,7 +4,7 @@
  * Created At: Monday, 2022/06/20 , 10:52:46                                   *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/06/20 , 11:36:43                                *
+ * Last Modified: Monday, 2022/06/20 , 16:08:59                                *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -114,7 +114,7 @@ func MustRegister(coder Coder) {
 	codes[coder.Code()] = coder
 }
 
-// ParseCoder parse any error into *ErrorWithCode.
+// ParseCoder parse any error into *withCode.
 // nil error will return nil direct.
 // None WithStack error will be parsed as ErrUnknown.
 func ParseCoder(err error) Coder {
@@ -122,8 +122,8 @@ func ParseCoder(err error) Coder {
 		return nil
 	}
 
-	if v, ok := err.(*ErrorWithCode); ok {
-		if coder, ok := codes[v.Code]; ok {
+	if v, ok := err.(*withCode); ok {
+		if coder, ok := codes[v.code]; ok {
 			return coder
 		}
 	}
@@ -133,13 +133,13 @@ func ParseCoder(err error) Coder {
 
 // IsCode reports whether any error in err's chain contains the given error code.
 func IsCode(err error, code int) bool {
-	if v, ok := err.(*ErrorWithCode); ok {
-		if v.Code == code {
+	if v, ok := err.(*withCode); ok {
+		if v.code == code {
 			return true
 		}
 
-		if v.Details != nil {
-			return IsCode(v.Details, code)
+		if v.details != nil {
+			return IsCode(v.details, code)
 		}
 
 		return false

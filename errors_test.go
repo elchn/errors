@@ -4,15 +4,13 @@
  * Created At: Monday, 2022/06/20 , 10:52:46                                   *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/06/20 , 11:39:07                                *
+ * Last Modified: Monday, 2022/06/20 , 16:09:21                                *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
  * Date      	By	Comments                                                   *
  * ----------	---	---------------------------------------------------------  *
  */
-
-
 
 package errors
 
@@ -247,18 +245,18 @@ func TestWithCode(t *testing.T) {
 		wantType string
 		wantCode int
 	}{
-		{ConfigurationNotValid, "ConfigurationNotValid error", "*ErrorWithCode", ConfigurationNotValid},
+		{ConfigurationNotValid, "ConfigurationNotValid error", "*withCode", ConfigurationNotValid},
 	}
 
 	for _, tt := range tests {
 		got := WithCode(tt.code, tt.message)
-		err, ok := got.(*ErrorWithCode)
+		err, ok := got.(*withCode)
 		if !ok {
 			t.Errorf("WithCode(%v, %q): error type got: %T, want %s", tt.code, tt.message, got, tt.wantType)
 		}
 
-		if err.Code != tt.wantCode {
-			t.Errorf("WithCode(%v, %q): got: %v, want %v", tt.code, tt.message, err.Code, tt.wantCode)
+		if err.code != tt.wantCode {
+			t.Errorf("WithCode(%v, %q): got: %v, want %v", tt.code, tt.message, err.code, tt.wantCode)
 		}
 	}
 }
@@ -272,18 +270,18 @@ func TestWithCodef(t *testing.T) {
 		wantCode   int
 		wangString string
 	}{
-		{ConfigurationNotValid, "Configuration %s", "failed", "*ErrorWithCode", ConfigurationNotValid, `ConfigurationNotValid error`},
+		{ConfigurationNotValid, "Configuration %s", "failed", "*withCode", ConfigurationNotValid, `ConfigurationNotValid error`},
 	}
 
 	for _, tt := range tests {
 		got := WithCode(tt.code, tt.format, tt.args)
-		err, ok := got.(*ErrorWithCode)
+		err, ok := got.(*withCode)
 		if !ok {
 			t.Errorf("WithCode(%v, %q %q): error type got: %T, want %s", tt.code, tt.format, tt.args, got, tt.wantType)
 		}
 
-		if err.Code != tt.wantCode {
-			t.Errorf("WithCode(%v, %q %q): got: %v, want %v", tt.code, tt.format, tt.args, err.Code, tt.wantCode)
+		if err.code != tt.wantCode {
+			t.Errorf("WithCode(%v, %q %q): got: %v, want %v", tt.code, tt.format, tt.args, err.code, tt.wantCode)
 		}
 
 		if got.Error() != tt.wangString {
