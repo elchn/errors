@@ -1,3 +1,17 @@
+/*
+ * File: /errors.go                                                            *
+ * Project: errors                                                             *
+ * Created At: Monday, 2022/06/20 , 10:52:46                                   *
+ * Author: elchn                                                               *
+ * -----                                                                       *
+ * Last Modified: Monday, 2022/06/20 , 11:33:37                                *
+ * Modified By: elchn                                                          *
+ * -----                                                                       *
+ * HISTORY:                                                                    *
+ * Date      	By	Comments                                                   *
+ * ----------	---	---------------------------------------------------------  *
+ */
+
 // Package errors provides simple error handling primitives.
 //
 // The traditional error handling idiom in Go is roughly akin to
@@ -147,30 +161,30 @@ func WithStack(err error) error {
 		return nil
 	}
 
-	if e, ok := err.(*withCode); ok {
-		return &withCode{
-			err:   e.err,
-			code:  e.code,
-			cause: err,
-			stack: callers(),
+	if e, ok := err.(*ErrorWithCode); ok {
+		return &ErrorWithCode{
+			Err:     e.Err,
+			Code:    e.Code,
+			Details: err,
+			stack:   callers(),
 		}
 	}
 
-	return &withStack{
+	return &ErrorWithStack{
 		err,
 		callers(),
 	}
 }
 
-type withStack struct {
+type ErrorWithStack struct {
 	error
 	*stack
 }
 
-func (w *withStack) Cause() error { return w.error }
+func (w *ErrorWithStack) Cause() error { return w.error }
 
 // Unwrap provides compatibility for Go 1.13 error chains.
-func (w *withStack) Unwrap() error {
+func (w *ErrorWithStack) Unwrap() error {
 	if e, ok := w.error.(interface{ Unwrap() error }); ok {
 		return e.Unwrap()
 	}
@@ -178,7 +192,7 @@ func (w *withStack) Unwrap() error {
 	return w.error
 }
 
-func (w *withStack) Format(s fmt.State, verb rune) {
+func (w *ErrorWithStack) Format(s fmt.State, verb rune) {
 	switch verb {
 	case 'v':
 		if s.Flag('+') {
@@ -194,27 +208,27 @@ func (w *withStack) Format(s fmt.State, verb rune) {
 	}
 }
 
-// Wrap returns an error annotating err with a stack trace
+// Wrap returns an error annotating err With a stack trace
 // at the point Wrap is called, and the supplied message.
 // If err is nil, Wrap returns nil.
 func Wrap(err error, message string) error {
 	if err == nil {
 		return nil
 	}
-	if e, ok := err.(*withCode); ok {
-		return &withCode{
-			err:   fmt.Errorf(message),
-			code:  e.code,
-			cause: err,
-			stack: callers(),
+	if e, ok := err.(*ErrorWithCode); ok {
+		return &ErrorWithCode{
+			Err:     fmt.Errorf(message),
+			Code:    e.Code,
+			Details: err,
+			stack:   callers(),
 		}
 	}
 
-	err = &withMessage{
-		cause: err,
-		msg:   message,
+	err = &ErrorWithMessage{
+		Details: err,
+		Msg:     message,
 	}
-	return &withStack{
+	return &ErrorWithStack{
 		err,
 		callers(),
 	}
@@ -228,66 +242,66 @@ func Wrapf(err error, format string, args ...interface{}) error {
 		return nil
 	}
 
-	if e, ok := err.(*withCode); ok {
-		return &withCode{
-			err:   fmt.Errorf(format, args...),
-			code:  e.code,
-			cause: err,
-			stack: callers(),
+	if e, ok := err.(*ErrorWithCode); ok {
+		return &ErrorWithCode{
+			Err:     fmt.Errorf(format, args...),
+			Code:    e.Code,
+			Details: err,
+			stack:   callers(),
 		}
 	}
 
-	err = &withMessage{
-		cause: err,
-		msg:   fmt.Sprintf(format, args...),
+	err = &ErrorWithMessage{
+		Details: err,
+		Msg:     fmt.Sprintf(format, args...),
 	}
-	return &withStack{
+	return &ErrorWithStack{
 		err,
 		callers(),
 	}
 }
 
-// WithMessage annotates err with a new message.
+// WithMessage annotates err With a new message.
 // If err is nil, WithMessage returns nil.
 func WithMessage(err error, message string) error {
 	if err == nil {
 		return nil
 	}
-	return &withMessage{
-		cause: err,
-		msg:   message,
+	return &ErrorWithMessage{
+		Details: err,
+		Msg:     message,
 	}
 }
 
-// WithMessagef annotates err with the format specifier.
+// WithMessagef annotates err With the format specifier.
 // If err is nil, WithMessagef returns nil.
 func WithMessagef(err error, format string, args ...interface{}) error {
 	if err == nil {
 		return nil
 	}
-	return &withMessage{
-		cause: err,
-		msg:   fmt.Sprintf(format, args...),
+	return &ErrorWithMessage{
+		Details: err,
+		Msg:     fmt.Sprintf(format, args...),
 	}
 }
 
-type withMessage struct {
-	cause error
-	msg   string
+type ErrorWithMessage struct {
+	Details error
+	Msg     string
 }
 
-func (w *withMessage) Error() string { return w.msg }
-func (w *withMessage) Cause() error  { return w.cause }
+func (w *ErrorWithMessage) Error() string { return w.Msg }
+func (w *ErrorWithMessage) Cause() error  { return w.Details }
 
 // Unwrap provides compatibility for Go 1.13 error chains.
-func (w *withMessage) Unwrap() error { return w.cause }
+func (w *ErrorWithMessage) Unwrap() error { return w.Details }
 
-func (w *withMessage) Format(s fmt.State, verb rune) {
+func (w *ErrorWithMessage) Format(s fmt.State, verb rune) {
 	switch verb {
 	case 'v':
 		if s.Flag('+') {
 			fmt.Fprintf(s, "%+v\n", w.Cause())
-			io.WriteString(s, w.msg)
+			io.WriteString(s, w.Msg)
 			return
 		}
 		fallthrough
@@ -296,17 +310,17 @@ func (w *withMessage) Format(s fmt.State, verb rune) {
 	}
 }
 
-type withCode struct {
-	err   error
-	code  int
-	cause error
+type ErrorWithCode struct {
+	Err     error
+	Code    int
+	Details error
 	*stack
 }
 
 func WithCode(code int, format string, args ...interface{}) error {
-	return &withCode{
-		err:   fmt.Errorf(format, args...),
-		code:  code,
+	return &ErrorWithCode{
+		Err:   fmt.Errorf(format, args...),
+		Code:  code,
 		stack: callers(),
 	}
 }
@@ -316,22 +330,22 @@ func WrapC(err error, code int, format string, args ...interface{}) error {
 		return nil
 	}
 
-	return &withCode{
-		err:   fmt.Errorf(format, args...),
-		code:  code,
-		cause: err,
-		stack: callers(),
+	return &ErrorWithCode{
+		Err:     fmt.Errorf(format, args...),
+		Code:    code,
+		Details: err,
+		stack:   callers(),
 	}
 }
 
 // Error return the externally-safe error message.
-func (w *withCode) Error() string { return fmt.Sprintf("%v", w) }
+func (w *ErrorWithCode) Error() string { return fmt.Sprintf("%v", w) }
 
-// Cause return the cause of the withCode error.
-func (w *withCode) Cause() error { return w.cause }
+// Cause return the cause of the WithCode error.
+func (w *ErrorWithCode) Cause() error { return w.Details }
 
 // Unwrap provides compatibility for Go 1.13 error chains.
-func (w *withCode) Unwrap() error { return w.cause }
+func (w *ErrorWithCode) Unwrap() error { return w.Details }
 
 // Cause returns the underlying cause of the error, if possible.
 // An error value has a cause if it implements the following

@@ -1,3 +1,17 @@
+/*
+ * File: /code.go                                                              *
+ * Project: errors                                                             *
+ * Created At: Monday, 2022/06/20 , 10:52:46                                   *
+ * Author: elchn                                                               *
+ * -----                                                                       *
+ * Last Modified: Monday, 2022/06/20 , 11:36:43                                *
+ * Modified By: elchn                                                          *
+ * -----                                                                       *
+ * HISTORY:                                                                    *
+ * Date      	By	Comments                                                   *
+ * ----------	---	---------------------------------------------------------  *
+ */
+
 package errors
 
 import (
@@ -100,16 +114,16 @@ func MustRegister(coder Coder) {
 	codes[coder.Code()] = coder
 }
 
-// ParseCoder parse any error into *withCode.
+// ParseCoder parse any error into *ErrorWithCode.
 // nil error will return nil direct.
-// None withStack error will be parsed as ErrUnknown.
+// None WithStack error will be parsed as ErrUnknown.
 func ParseCoder(err error) Coder {
 	if err == nil {
 		return nil
 	}
 
-	if v, ok := err.(*withCode); ok {
-		if coder, ok := codes[v.code]; ok {
+	if v, ok := err.(*ErrorWithCode); ok {
+		if coder, ok := codes[v.Code]; ok {
 			return coder
 		}
 	}
@@ -119,13 +133,13 @@ func ParseCoder(err error) Coder {
 
 // IsCode reports whether any error in err's chain contains the given error code.
 func IsCode(err error, code int) bool {
-	if v, ok := err.(*withCode); ok {
-		if v.code == code {
+	if v, ok := err.(*ErrorWithCode); ok {
+		if v.Code == code {
 			return true
 		}
 
-		if v.cause != nil {
-			return IsCode(v.cause, code)
+		if v.Details != nil {
+			return IsCode(v.Details, code)
 		}
 
 		return false

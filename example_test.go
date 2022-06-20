@@ -1,3 +1,17 @@
+/*
+ * File: /example_test.go                                                      *
+ * Project: errors                                                             *
+ * Created At: Monday, 2022/06/20 , 10:52:46                                   *
+ * Author: elchn                                                               *
+ * -----                                                                       *
+ * Last Modified: Monday, 2022/06/20 , 11:38:26                                *
+ * Modified By: elchn                                                          *
+ * -----                                                                       *
+ * HISTORY:                                                                    *
+ * Date      	By	Comments                                                   *
+ * ----------	---	---------------------------------------------------------  *
+ */
+
 package errors
 
 import (
@@ -212,7 +226,7 @@ func ExampleWithCode() {
 	fmt.Println(err)
 
 	err = WrapC(err, ErrInvalidJSON, "this is a wrap error message with new error code")
-	fmt.Println(codes[err.(*withCode).code].String())
+	fmt.Println(codes[err.(*ErrorWithCode).Code].String())
 	fmt.Println(err)
 	//fmt.Printf("%+v\n", err)
 	//fmt.Printf("%#+v\n", err)
@@ -230,7 +244,7 @@ func ExamplewithCode_code() {
 		err = WrapC(err, ErrLoadConfigFailed, "failed to load configuration")
 	}
 
-	fmt.Println(err.(*withCode).code)
+	fmt.Println(err.(*ErrorWithCode).Code)
 	// Output: 1003
 }
 
@@ -240,7 +254,7 @@ func ExampledefaultCoder_HTTPStatus() {
 		err = WrapC(err, ErrLoadConfigFailed, "failed to load configuration")
 	}
 
-	fmt.Println(codes[err.(*withCode).code].HTTPStatus())
+	fmt.Println(codes[err.(*ErrorWithCode).Code].HTTPStatus())
 	// Output: 500
 }
 
@@ -261,6 +275,6 @@ func ExampleString() {
 		err = WrapC(err, ErrLoadConfigFailed, "failed to load configuration")
 	}
 
-	fmt.Println(codes[err.(*withCode).code].String())
+	fmt.Println(codes[err.(*ErrorWithCode).Code].String())
 	// Output: Load configuration file failed
 }
