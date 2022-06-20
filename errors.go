@@ -4,7 +4,7 @@
  * Created At: Monday, 2022/06/20 , 10:52:46                                   *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/06/20 , 16:08:33                                *
+ * Last Modified: Monday, 2022/06/20 , 17:58:04                                *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -163,7 +163,7 @@ func WithStack(err error) error {
 
 	if e, ok := err.(*withCode); ok {
 		return &withCode{
-			Err:     e.Err,
+			err:     e.err,
 			code:    e.code,
 			details: err,
 			stack:   callers(),
@@ -217,7 +217,7 @@ func Wrap(err error, message string) error {
 	}
 	if e, ok := err.(*withCode); ok {
 		return &withCode{
-			Err:     fmt.Errorf(message),
+			err:     fmt.Errorf(message),
 			code:    e.code,
 			details: err,
 			stack:   callers(),
@@ -244,7 +244,7 @@ func Wrapf(err error, format string, args ...interface{}) error {
 
 	if e, ok := err.(*withCode); ok {
 		return &withCode{
-			Err:     fmt.Errorf(format, args...),
+			err:     fmt.Errorf(format, args...),
 			code:    e.code,
 			details: err,
 			stack:   callers(),
@@ -311,7 +311,7 @@ func (w *withMessage) Format(s fmt.State, verb rune) {
 }
 
 type withCode struct {
-	Err     error
+	err     error
 	code    int
 	details error
 	*stack
@@ -319,7 +319,7 @@ type withCode struct {
 
 func WithCode(code int, format string, args ...interface{}) error {
 	return &withCode{
-		Err:   fmt.Errorf(format, args...),
+		err:   fmt.Errorf(format, args...),
 		code:  code,
 		stack: callers(),
 	}
@@ -331,7 +331,7 @@ func WrapC(err error, code int, format string, args ...interface{}) error {
 	}
 
 	return &withCode{
-		Err:     fmt.Errorf(format, args...),
+		err:     fmt.Errorf(format, args...),
 		code:    code,
 		details: err,
 		stack:   callers(),

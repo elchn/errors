@@ -4,7 +4,7 @@
  * Created At: Monday, 2022/06/20 , 10:52:46                                   *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/06/20 , 16:09:42                                *
+ * Last Modified: Monday, 2022/06/20 , 18:01:06                                *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -197,13 +197,13 @@ func buildFormatInfo(e error) *formatInfo {
 
 		extMsg := coder.String()
 		if extMsg == "" {
-			extMsg = err.Err.Error()
+			extMsg = err.err.Error()
 		}
 
 		finfo = &formatInfo{
 			code:    coder.Code(),
 			message: extMsg,
-			err:     err.Err.Error(),
+			err:     err.err.Error(),
 			stack:   err.stack,
 		}
 	default:
