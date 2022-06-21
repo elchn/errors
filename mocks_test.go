@@ -1,3 +1,19 @@
+/*
+ * File: /mocks_test.go                                                        *
+ * Project: errors                                                             *
+ * Created At: Monday, 2022/06/20 , 10:52:46                                   *
+ * Author: elchn                                                               *
+ * -----                                                                       *
+ * Last Modified: Tuesday, 2022/06/21 , 07:59:30                               *
+ * Modified By: elchn                                                          *
+ * -----                                                                       *
+ * HISTORY:                                                                    *
+ * Date      	By	Comments                                                   *
+ * ----------	---	---------------------------------------------------------  *
+ */
+
+
+
 // Copyright 2020 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 // Use of this source code is governed by a MIT style
 // license that can be found in the LICENSE file.
@@ -23,10 +39,10 @@ const (
 )
 
 func init() {
-	Register(defaultCoder{ConfigurationNotValid, 500, "ConfigurationNotValid error", ""})
-	Register(defaultCoder{ErrInvalidJSON, 500, "Data is not valid JSON", ""})
-	Register(defaultCoder{ErrEOF, 500, "End of input", ""})
-	Register(defaultCoder{ErrLoadConfigFailed, 500, "Load configuration file failed", ""})
+	Register(defaultCoder{ConfigurationNotValid, 500, "configurationNotValid error", ""})
+	Register(defaultCoder{ErrInvalidJSON, 500, "data is not valid JSON", ""})
+	Register(defaultCoder{ErrEOF, 500, "end of input", ""})
+	Register(defaultCoder{ErrLoadConfigFailed, 500, "load configuration file failed", ""})
 }
 
 func loadConfig() error {

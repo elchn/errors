@@ -4,7 +4,7 @@
  * Created At: Monday, 2022/06/20 , 11:11:43                                   *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Monday, 2022/06/20 , 15:36:20                                *
+ * Last Modified: Monday, 2022/06/20 , 18:54:31                                *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -18,13 +18,13 @@ import (
 	"fmt"
 )
 
-func ExampleExported() {
+func ExampleToMyError() {
 	err := loadConfig()
 	myError := ToMyError(err)
 	bytes, _ := json.MarshalIndent(myError, "", " ")
 	fmt.Println(string(bytes))
 	// Output:
-	// {
+	// //{
 	//  "code": 1000,
 	//  "message": "ConfigurationNotValid error",
 	//  "details": {
