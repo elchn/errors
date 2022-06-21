@@ -4,7 +4,7 @@
  * Created At: Monday, 2022/06/20 , 11:11:43                                   *
  * Author: elchn                                                               *
  * -----                                                                       *
- * Last Modified: Tuesday, 2022/06/21 , 08:00:50                               *
+ * Last Modified: Tuesday, 2022/06/21 , 08:24:05                               *
  * Modified By: elchn                                                          *
  * -----                                                                       *
  * HISTORY:                                                                    *
@@ -20,6 +20,8 @@ type MyError struct {
 	// Message contains the detail of this message.
 	// This message is suitable to be exposed to external
 	Message string `json:"message"`
+	
+	Specific string `json:"specific,omitempty"`
 
 	Details error `json:"details,omitempty"`
 }
@@ -33,11 +35,13 @@ func ToMyError(e error) MyError {
 
 	if e, ok := e.(*withCode); ok {
 		myError.Code = e.code
-		myError.Message = e.err.Error()
-		if len(myError.Message) > 0 {
-			myError.Message += ": "
-		}
-		myError.Message += e.Error()
+		myError.Message = e.Error()
+		myError.Specific = e.err.Error()
+		// if len(myError.Message) > 0 {
+		// 	myError.Message += ": "
+		// }
+		// myError.Message += e.Error()
+
 		// if msg := e.err.Error(); len(msg) != 0 {
 		// 	myError.Message = msg
 		// } else {
